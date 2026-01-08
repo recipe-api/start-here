@@ -1,38 +1,59 @@
 # Data Schema
 
-This document describes the complete data structure returned by Recipe API endpoints.
+This document describes the complete data structure returned by Recipe API endpoints, based on real API responses.
 
 ## Recipe Object (Full)
 
-When you fetch a recipe via `GET /api/v1/recipes/:id`, you receive the complete recipe object:
+When you fetch a recipe via `GET /api/v1/recipes/:id` or the public `GET /api/v1/dinner` endpoint, you receive the complete recipe object.
+
+### Real Example
 
 ```json
 {
-  "id": "c0582be3-10bf-4077-ba54-b6ff6f236e53",
-  "name": "Classic Chicken Parmesan",
-  "description": "Crispy breaded chicken cutlets topped with marinara and melted mozzarella.",
+  "id": "a066f472-ed0c-46ea-8e2c-a0053c3183a8",
+  "name": "Texas Chili con Carne",
+  "description": "A thick, beef-based stew featuring tender cubes of meat in a rich sauce made from reconstituted whole chilies and aromatic spices without beans or tomatoes.",
   "category": "Dinner",
-  "cuisine": "Italian",
+  "cuisine": "American",
   "difficulty": "Intermediate",
-  "tags": ["chicken", "italian", "comfort food", "baked"],
-  "yields": {
-    "amount": 4,
-    "unit": "servings"
+  "tags": [
+    "Beef",
+    "Slow-Cooked",
+    "High-Protein",
+    "Southwestern"
+  ],
+  "meta": {
+    "active_time": "PT20M",
+    "passive_time": "PT1H40M",
+    "total_time": "PT2H",
+    "overnight_required": false,
+    "yields": "4 servings",
+    "yield_count": 4,
+    "serving_size_g": 300
   },
-  "timing": {
-    "active": "PT30M",
-    "passive": "PT25M",
-    "total": "PT55M"
+  "dietary": {
+    "flags": [
+      "Gluten-Free",
+      "Dairy-Free",
+      "Egg-Free",
+      "Nut-Free",
+      "Peanut-Free",
+      "Soy-Free"
+    ],
+    "not_suitable_for": []
   },
+  "storage": {...},
+  "equipment": [...],
   "ingredients": [...],
   "instructions": [...],
-  "nutrition": {...},
-  "equipment": [...],
-  "tips": [...],
-  "storage": {...},
-  "chef_notes": "..."
+  "troubleshooting": [...],
+  "chef_notes": [...],
+  "cultural_context": "...",
+  "nutrition": {...}
 }
 ```
+
+---
 
 ## Field Reference
 
@@ -44,321 +65,74 @@ When you fetch a recipe via `GET /api/v1/recipes/:id`, you receive the complete 
 | `name` | string | Recipe title |
 | `description` | string | Brief description of the dish |
 | `category` | string | Primary category (Breakfast, Lunch, Dinner, etc.) |
-| `cuisine` | string | Cuisine type (Italian, Mexican, Thai, etc.) |
+| `cuisine` | string | Cuisine type (American, Italian, Mexican, etc.) |
 | `difficulty` | string | Skill level: `Beginner`, `Intermediate`, or `Advanced` |
 | `tags` | string[] | Searchable tags and keywords |
 
-### Yields
+---
 
-Describes how much the recipe makes.
+### Meta
+
+Timing and yield information.
 
 ```json
 {
-  "yields": {
-    "amount": 4,
-    "unit": "servings"
+  "meta": {
+    "active_time": "PT20M",
+    "passive_time": "PT1H40M",
+    "total_time": "PT2H",
+    "overnight_required": false,
+    "yields": "4 servings",
+    "yield_count": 4,
+    "serving_size_g": 300
   }
 }
 ```
 
 | Field | Type | Description |
 |-------|------|-------------|
-| `amount` | number | Quantity produced |
-| `unit` | string | Unit of measurement (servings, pieces, cups, etc.) |
-
-### Timing
-
-All times use ISO 8601 duration format.
-
-```json
-{
-  "timing": {
-    "active": "PT30M",
-    "passive": "PT25M",
-    "total": "PT55M"
-  }
-}
-```
-
-| Field | Type | Description |
-|-------|------|-------------|
-| `active` | string (ISO 8601) | Hands-on preparation time |
-| `passive` | string (ISO 8601) | Inactive time (baking, marinating, resting) |
-| `total` | string (ISO 8601) | Total time from start to finish |
+| `active_time` | string (ISO 8601) | Hands-on preparation time |
+| `passive_time` | string (ISO 8601) | Inactive time (baking, marinating, resting) |
+| `total_time` | string (ISO 8601) | Total time from start to finish |
+| `overnight_required` | boolean | Whether recipe requires overnight prep |
+| `yields` | string | Human-readable yield description |
+| `yield_count` | number | Numeric serving/portion count |
+| `serving_size_g` | number | Serving size in grams |
 
 **ISO 8601 Duration Examples:**
-- `PT30M` = 30 minutes
+- `PT20M` = 20 minutes
 - `PT1H` = 1 hour
-- `PT1H30M` = 1 hour 30 minutes
-- `PT2H45M` = 2 hours 45 minutes
+- `PT1H40M` = 1 hour 40 minutes
+- `PT2H` = 2 hours
 
-### Ingredients
+---
 
-Ingredients are organized into groups, each with a list of items.
+### Dietary
 
-```json
-{
-  "ingredients": [
-    {
-      "group": "Chicken",
-      "items": [
-        {
-          "name": "boneless skinless chicken breasts",
-          "quantity": 4,
-          "unit": "pieces",
-          "preparation": "pounded to 1/2-inch thickness",
-          "substitutions": [
-            {
-              "name": "chicken thighs",
-              "notes": "Increase cooking time by 5 minutes"
-            }
-          ]
-        },
-        {
-          "name": "all-purpose flour",
-          "quantity": 0.5,
-          "unit": "cup",
-          "preparation": "for dredging"
-        }
-      ]
-    },
-    {
-      "group": "Topping",
-      "items": [
-        {
-          "name": "marinara sauce",
-          "quantity": 2,
-          "unit": "cups"
-        },
-        {
-          "name": "mozzarella cheese",
-          "quantity": 8,
-          "unit": "oz",
-          "preparation": "shredded"
-        }
-      ]
-    }
-  ]
-}
-```
-
-#### Ingredient Group
-
-| Field | Type | Description |
-|-------|------|-------------|
-| `group` | string | Group name (e.g., "Sauce", "Dough", "Topping") |
-| `items` | IngredientItem[] | List of ingredients in this group |
-
-#### Ingredient Item
-
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| `name` | string | Yes | Ingredient name |
-| `quantity` | number | Yes | Amount needed |
-| `unit` | string | Yes | Unit of measurement |
-| `preparation` | string | No | Prep instructions (diced, minced, etc.) |
-| `substitutions` | Substitution[] | No | Alternative ingredients |
-
-#### Substitution
-
-| Field | Type | Description |
-|-------|------|-------------|
-| `name` | string | Alternative ingredient name |
-| `notes` | string | Adjustment notes for using this substitution |
-
-### Instructions
-
-Step-by-step cooking instructions with structured metadata.
+Dietary flags and restrictions.
 
 ```json
 {
-  "instructions": [
-    {
-      "step": 1,
-      "text": "Preheat oven to 425°F (220°C). Line a baking sheet with parchment paper.",
-      "action": "preheat",
-      "temperature": {
-        "value": 425,
-        "unit": "F"
-      }
-    },
-    {
-      "step": 2,
-      "text": "Season chicken breasts with salt and pepper. Dredge in flour, shaking off excess.",
-      "action": "season"
-    },
-    {
-      "step": 3,
-      "text": "Heat oil in a large skillet over medium-high heat. Cook chicken until golden brown, about 3-4 minutes per side.",
-      "action": "cook",
-      "doneness_cue": "golden brown on both sides"
-    },
-    {
-      "step": 4,
-      "text": "Transfer chicken to prepared baking sheet. Top each piece with marinara and mozzarella.",
-      "action": "assemble"
-    },
-    {
-      "step": 5,
-      "text": "Bake until cheese is melted and bubbly, about 15-20 minutes.",
-      "action": "bake",
-      "temperature": {
-        "value": 425,
-        "unit": "F"
-      },
-      "doneness_cue": "cheese melted and bubbly, internal temp 165°F"
-    }
-  ]
-}
-```
-
-#### Instruction Step
-
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| `step` | number | Yes | Step number (1-indexed) |
-| `text` | string | Yes | Human-readable instruction |
-| `action` | string | No | Action keyword (preheat, chop, mix, bake, etc.) |
-| `temperature` | Temperature | No | Cooking temperature if applicable |
-| `doneness_cue` | string | No | Visual/physical indicator of completion |
-
-#### Temperature
-
-| Field | Type | Description |
-|-------|------|-------------|
-| `value` | number | Temperature value |
-| `unit` | string | Unit: `F` (Fahrenheit) or `C` (Celsius) |
-
-### Nutrition
-
-Comprehensive nutrition data per serving, sourced from USDA.
-
-```json
-{
-  "nutrition": {
-    "serving_size": "1 piece",
-    "calories": 485,
-    "macros": {
-      "total_fat": { "value": 22, "unit": "g", "daily_value": 28 },
-      "saturated_fat": { "value": 8, "unit": "g", "daily_value": 40 },
-      "trans_fat": { "value": 0, "unit": "g" },
-      "cholesterol": { "value": 145, "unit": "mg", "daily_value": 48 },
-      "sodium": { "value": 890, "unit": "mg", "daily_value": 39 },
-      "total_carbohydrate": { "value": 24, "unit": "g", "daily_value": 9 },
-      "dietary_fiber": { "value": 2, "unit": "g", "daily_value": 7 },
-      "total_sugars": { "value": 4, "unit": "g" },
-      "added_sugars": { "value": 1, "unit": "g", "daily_value": 2 },
-      "protein": { "value": 48, "unit": "g", "daily_value": 96 }
-    },
-    "vitamins": {
-      "vitamin_a": { "value": 520, "unit": "mcg", "daily_value": 58 },
-      "vitamin_c": { "value": 8, "unit": "mg", "daily_value": 9 },
-      "vitamin_d": { "value": 0.2, "unit": "mcg", "daily_value": 1 },
-      "vitamin_e": { "value": 2.1, "unit": "mg", "daily_value": 14 },
-      "vitamin_k": { "value": 12, "unit": "mcg", "daily_value": 10 },
-      "thiamin": { "value": 0.3, "unit": "mg", "daily_value": 25 },
-      "riboflavin": { "value": 0.4, "unit": "mg", "daily_value": 31 },
-      "niacin": { "value": 18, "unit": "mg", "daily_value": 113 },
-      "vitamin_b6": { "value": 1.2, "unit": "mg", "daily_value": 71 },
-      "folate": { "value": 45, "unit": "mcg", "daily_value": 11 },
-      "vitamin_b12": { "value": 1.1, "unit": "mcg", "daily_value": 46 },
-      "pantothenic_acid": { "value": 2.1, "unit": "mg", "daily_value": 42 }
-    },
-    "minerals": {
-      "calcium": { "value": 380, "unit": "mg", "daily_value": 29 },
-      "iron": { "value": 2.5, "unit": "mg", "daily_value": 14 },
-      "magnesium": { "value": 52, "unit": "mg", "daily_value": 12 },
-      "phosphorus": { "value": 580, "unit": "mg", "daily_value": 46 },
-      "potassium": { "value": 620, "unit": "mg", "daily_value": 13 },
-      "zinc": { "value": 3.2, "unit": "mg", "daily_value": 29 },
-      "copper": { "value": 0.15, "unit": "mg", "daily_value": 17 },
-      "manganese": { "value": 0.4, "unit": "mg", "daily_value": 17 },
-      "selenium": { "value": 45, "unit": "mcg", "daily_value": 82 }
-    }
+  "dietary": {
+    "flags": [
+      "Gluten-Free",
+      "Dairy-Free",
+      "Egg-Free",
+      "Nut-Free",
+      "Peanut-Free",
+      "Soy-Free"
+    ],
+    "not_suitable_for": []
   }
 }
 ```
 
-#### Nutrition Overview
-
 | Field | Type | Description |
 |-------|------|-------------|
-| `serving_size` | string | Human-readable serving size |
-| `calories` | number | Calories per serving |
-| `macros` | object | Macronutrient breakdown |
-| `vitamins` | object | Vitamin content |
-| `minerals` | object | Mineral content |
+| `flags` | string[] | Dietary categories the recipe satisfies |
+| `not_suitable_for` | string[] | Dietary restrictions this recipe violates |
 
-#### Nutrient Value
-
-Each nutrient follows this structure:
-
-| Field | Type | Description |
-|-------|------|-------------|
-| `value` | number | Amount of the nutrient |
-| `unit` | string | Unit (g, mg, mcg) |
-| `daily_value` | number | Percentage of daily recommended value (when available) |
-
-#### Complete Nutrient List (32 nutrients)
-
-**Macronutrients:**
-- total_fat, saturated_fat, trans_fat
-- cholesterol, sodium
-- total_carbohydrate, dietary_fiber, total_sugars, added_sugars
-- protein
-
-**Vitamins:**
-- vitamin_a, vitamin_c, vitamin_d, vitamin_e, vitamin_k
-- thiamin, riboflavin, niacin, vitamin_b6, folate, vitamin_b12
-- pantothenic_acid
-
-**Minerals:**
-- calcium, iron, magnesium, phosphorus, potassium
-- zinc, copper, manganese, selenium
-
-### Equipment
-
-List of required cooking equipment.
-
-```json
-{
-  "equipment": [
-    "Large oven-safe skillet",
-    "Baking sheet",
-    "Parchment paper",
-    "Meat thermometer",
-    "Tongs"
-  ]
-}
-```
-
-| Field | Type | Description |
-|-------|------|-------------|
-| `equipment` | string[] | List of required tools and equipment |
-
-### Tips & Troubleshooting
-
-Common issues and solutions.
-
-```json
-{
-  "tips": [
-    {
-      "issue": "Breading falls off during cooking",
-      "solution": "Make sure chicken is completely dry before dredging. Press breading firmly and let rest 5 minutes before cooking."
-    },
-    {
-      "issue": "Chicken is dry",
-      "solution": "Don't overcook. Use a meat thermometer and remove from oven at 165°F internal temperature."
-    }
-  ]
-}
-```
-
-| Field | Type | Description |
-|-------|------|-------------|
-| `issue` | string | Common problem description |
-| `solution` | string | How to fix or prevent the issue |
+---
 
 ### Storage
 
@@ -368,59 +142,437 @@ Storage and reheating instructions.
 {
   "storage": {
     "refrigerator": {
-      "duration": "3-4 days",
-      "instructions": "Store in airtight container. Keep sauce separate if possible."
+      "notes": "Flavor improves after 24 hours.",
+      "duration": "P4D"
     },
     "freezer": {
-      "duration": "2-3 months",
-      "instructions": "Freeze without cheese topping. Add fresh cheese when reheating."
+      "notes": "Thaw overnight in refrigerator before reheating.",
+      "duration": "P3M"
     },
-    "reheating": "Reheat in 375°F oven for 15-20 minutes until heated through. Broil last 2 minutes for crispy top."
+    "reheating": "Heat in a saucepan over medium-low heat, adding a splash of water if too thick.",
+    "does_not_keep": false
   }
 }
 ```
 
 | Field | Type | Description |
 |-------|------|-------------|
-| `refrigerator.duration` | string | How long it keeps refrigerated |
-| `refrigerator.instructions` | string | Refrigerator storage tips |
-| `freezer.duration` | string | How long it keeps frozen |
-| `freezer.instructions` | string | Freezer storage tips |
+| `refrigerator.notes` | string | Refrigerator storage tips |
+| `refrigerator.duration` | string (ISO 8601) | How long it keeps refrigerated |
+| `freezer.notes` | string | Freezer storage tips |
+| `freezer.duration` | string (ISO 8601) | How long it keeps frozen |
 | `reheating` | string | Reheating instructions |
+| `does_not_keep` | boolean | Whether recipe should be consumed immediately |
 
-### Chef Notes
+**ISO 8601 Duration for Days/Months:**
+- `P4D` = 4 days
+- `P3M` = 3 months
 
-Additional tips from the recipe developer.
+---
+
+### Equipment
+
+Required cooking equipment with alternatives.
 
 ```json
 {
-  "chef_notes": "For extra crispy chicken, use panko breadcrumbs and add 2 tablespoons of grated Parmesan to the breading mixture. Let the breaded chicken rest for 10 minutes before frying to help the coating adhere better."
+  "equipment": [
+    {
+      "name": "Blender",
+      "required": true,
+      "alternative": "Food processor or mortar and pestle"
+    },
+    {
+      "name": "Heavy skillet",
+      "required": true,
+      "alternative": "Dutch oven or heavy-bottomed pot"
+    },
+    {
+      "name": "Mixing bowl",
+      "required": true,
+      "alternative": null
+    }
+  ]
 }
 ```
 
 | Field | Type | Description |
 |-------|------|-------------|
-| `chef_notes` | string | Professional tips and variations |
+| `name` | string | Equipment name |
+| `required` | boolean | Whether this equipment is essential |
+| `alternative` | string \| null | Substitute equipment that can be used |
+
+---
+
+### Ingredients
+
+Ingredients organized into logical groups.
+
+```json
+{
+  "ingredients": [
+    {
+      "group_name": "Chili Base",
+      "items": [
+        {
+          "name": "red chilies",
+          "quantity": 6,
+          "unit": null,
+          "preparation": "dried",
+          "notes": "about 30g",
+          "substitutions": [],
+          "ingredient_id": "3c3f97d4-c951-43fd-865c-88fa8b445739",
+          "nutrition_source": "USDA FoodData Central"
+        },
+        {
+          "name": "stewing beef",
+          "quantity": 910,
+          "unit": "g",
+          "preparation": "cut into 1.3cm (1/2 inch) cubes",
+          "notes": null,
+          "substitutions": [],
+          "ingredient_id": "09f2eef4-739a-4fca-8b63-97d697257990",
+          "nutrition_source": "USDA FoodData Central"
+        },
+        {
+          "name": "salt",
+          "quantity": null,
+          "unit": null,
+          "preparation": null,
+          "notes": "to taste",
+          "substitutions": [],
+          "ingredient_id": "2631739c-2de4-4389-a6e3-ed3d06d0406f",
+          "nutrition_source": "USDA FoodData Central"
+        }
+      ]
+    },
+    {
+      "group_name": "Flavor Paste",
+      "items": [...]
+    }
+  ]
+}
+```
+
+#### Ingredient Group
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `group_name` | string | Group name (e.g., "Chili Base", "Flavor Paste", "Topping") |
+| `items` | IngredientItem[] | List of ingredients in this group |
+
+#### Ingredient Item
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `name` | string | Yes | Ingredient name |
+| `quantity` | number \| null | Yes | Amount needed (null for "to taste") |
+| `unit` | string \| null | Yes | Unit of measurement (null for count items like "2 cloves") |
+| `preparation` | string \| null | No | Prep instructions (dried, diced, minced, etc.) |
+| `notes` | string \| null | No | Additional notes ("about 30g", "to taste") |
+| `substitutions` | Substitution[] | No | Alternative ingredients |
+| `ingredient_id` | string (UUID) | Yes | Unique identifier for this ingredient |
+| `nutrition_source` | string | Yes | Source of nutrition data |
+
+---
+
+### Instructions
+
+Step-by-step cooking instructions with structured metadata.
+
+```json
+{
+  "instructions": [
+    {
+      "step_number": 1,
+      "phase": "prep",
+      "text": "Tear the dried chilies into strips and place them in a bowl. Cover with 240ml (1 cup) of boiling water and soak for 30 minutes.",
+      "structured": {
+        "action": "SOAK",
+        "temperature": null,
+        "duration": "PT30M",
+        "doneness_cues": null
+      },
+      "tips": []
+    },
+    {
+      "step_number": 3,
+      "phase": "cook",
+      "text": "Heat olive oil in a heavy skillet over medium-high heat. Brown the beef cubes on all sides until a crust forms.",
+      "structured": {
+        "action": "SEAR",
+        "temperature": null,
+        "duration": null,
+        "doneness_cues": {
+          "visual": "Beef is deeply browned on all sides",
+          "tactile": null
+        }
+      },
+      "tips": []
+    },
+    {
+      "step_number": 5,
+      "phase": "cook",
+      "text": "Reduce the heat to low, cover the skillet, and simmer for 1 hour.",
+      "structured": {
+        "action": "SIMMER",
+        "temperature": {
+          "celsius": 90,
+          "fahrenheit": 194
+        },
+        "duration": "PT1H",
+        "doneness_cues": null
+      },
+      "tips": []
+    },
+    {
+      "step_number": 8,
+      "phase": "finish",
+      "text": "Remove and discard the bay leaves. Taste and add more salt or pepper if needed before serving.",
+      "structured": {
+        "action": "SERVE",
+        "temperature": null,
+        "duration": null,
+        "doneness_cues": null
+      },
+      "tips": []
+    }
+  ]
+}
+```
+
+#### Instruction Step
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `step_number` | number | Step number (1-indexed) |
+| `phase` | string | Cooking phase: `prep`, `cook`, or `finish` |
+| `text` | string | Human-readable instruction |
+| `structured` | StructuredStep | Machine-readable step data |
+| `tips` | string[] | Tips specific to this step |
+
+#### Structured Step
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `action` | string | Action keyword: `SOAK`, `DRAIN`, `SEAR`, `BOIL`, `SIMMER`, `PUREE`, `SERVE`, etc. |
+| `temperature` | Temperature \| null | Cooking temperature if applicable |
+| `duration` | string \| null | Step duration (ISO 8601) |
+| `doneness_cues` | DonenessCues \| null | Visual/physical indicators of completion |
+
+#### Temperature
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `celsius` | number | Temperature in Celsius |
+| `fahrenheit` | number | Temperature in Fahrenheit |
+
+#### Doneness Cues
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `visual` | string \| null | What to look for visually |
+| `tactile` | string \| null | What to feel for |
+
+---
+
+### Troubleshooting
+
+Common issues and solutions.
+
+```json
+{
+  "troubleshooting": [
+    {
+      "symptom": "Beef is tough or chewy",
+      "likely_cause": "The meat has not simmered long enough to break down connective tissue.",
+      "prevention": "Ensure the liquid is at a very low simmer and the lid is tightly sealed.",
+      "fix": "Continue simmering in 15-minute increments until tender."
+    },
+    {
+      "symptom": "Chili is too watery",
+      "likely_cause": "Too much water added during blending or insufficient reduction.",
+      "prevention": "Add water to the blender only 15ml at a time.",
+      "fix": "Simmer uncovered for the final 15 minutes to evaporate excess moisture."
+    }
+  ]
+}
+```
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `symptom` | string | What went wrong |
+| `likely_cause` | string | Why it happened |
+| `prevention` | string | How to avoid it next time |
+| `fix` | string | How to salvage the dish |
+
+---
+
+### Chef Notes
+
+Array of professional tips and variations.
+
+```json
+{
+  "chef_notes": [
+    "For the deepest chili flavor, use a variety of dried chilies like ancho, guajillo, and pasilla. Toasting them briefly before soaking can enhance their aroma.",
+    "Don't overcrowd the skillet when browning the beef; sear in batches if necessary to ensure a good crust, which adds significant flavor to the final dish.",
+    "The simmering time is crucial for tenderizing the beef. Low and slow is key; the meat should be easily pierced with a fork.",
+    "The consistency of the chili can be adjusted by the amount of soaking liquid you use and the final simmering time. If it's too thick, add a splash of water or beef broth; if too thin, simmer uncovered for a bit longer."
+  ]
+}
+```
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `chef_notes` | string[] | Array of tips from the recipe developer |
+
+---
+
+### Cultural Context
+
+Background information about the dish.
+
+```json
+{
+  "cultural_context": "Texas Chili, or Chili con Carne, is a hearty stew deeply rooted in Texan culinary tradition. Its origins trace back to the mid-19th century, with early versions featuring simple ingredients like dried beef, chilies, and spices, cooked by cowboys and ranchers. The absence of beans and tomatoes is a defining characteristic, distinguishing it from other regional chili variations and emphasizing its pure, meat-and-chili flavor profile."
+}
+```
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `cultural_context` | string | Historical and cultural background of the dish |
+
+---
+
+### Nutrition
+
+Comprehensive nutrition data per serving, sourced from USDA FoodData Central.
+
+```json
+{
+  "nutrition": {
+    "per_serving": {
+      "calories": 569.02,
+      "protein_g": 44.14,
+      "carbohydrates_g": 5.59,
+      "fat_g": 41.99,
+      "saturated_fat_g": 16.48,
+      "trans_fat_g": 2.39,
+      "monounsaturated_fat_g": 20.66,
+      "polyunsaturated_fat_g": 2.29,
+      "fiber_g": 1.97,
+      "sugar_g": 1.84,
+      "sodium_mg": 350.75,
+      "cholesterol_mg": 154.7,
+      "potassium_mg": 903.3,
+      "calcium_mg": 74.24,
+      "iron_mg": 7.16,
+      "magnesium_mg": 60.57,
+      "phosphorus_mg": 434.12,
+      "zinc_mg": 16.82,
+      "vitamin_a_mcg": 101.01,
+      "vitamin_c_mg": 11.51,
+      "vitamin_d_mcg": 0.23,
+      "vitamin_e_mg": 2.15,
+      "vitamin_k_mcg": 14.73,
+      "vitamin_b6_mg": 0.97,
+      "vitamin_b12_mcg": 6.14,
+      "thiamin_mg": 0.19,
+      "riboflavin_mg": 0.38,
+      "niacin_mg": 10.47,
+      "folate_mcg": 12.53,
+      "water_g": 154.87,
+      "alcohol_g": null,
+      "caffeine_mg": null
+    },
+    "sources": [
+      "USDA FoodData Central"
+    ]
+  }
+}
+```
+
+#### Nutrition Overview
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `per_serving` | object | All nutrients calculated per serving |
+| `sources` | string[] | Data sources (typically "USDA FoodData Central") |
+
+#### Complete Nutrient List (32 fields)
+
+**Energy:**
+| Field | Unit | Description |
+|-------|------|-------------|
+| `calories` | kcal | Energy per serving |
+
+**Macronutrients:**
+| Field | Unit | Description |
+|-------|------|-------------|
+| `protein_g` | g | Protein |
+| `carbohydrates_g` | g | Total carbohydrates |
+| `fat_g` | g | Total fat |
+| `saturated_fat_g` | g | Saturated fat |
+| `trans_fat_g` | g | Trans fat |
+| `monounsaturated_fat_g` | g | Monounsaturated fat |
+| `polyunsaturated_fat_g` | g | Polyunsaturated fat |
+| `fiber_g` | g | Dietary fiber |
+| `sugar_g` | g | Total sugars |
+
+**Minerals:**
+| Field | Unit | Description |
+|-------|------|-------------|
+| `sodium_mg` | mg | Sodium |
+| `cholesterol_mg` | mg | Cholesterol |
+| `potassium_mg` | mg | Potassium |
+| `calcium_mg` | mg | Calcium |
+| `iron_mg` | mg | Iron |
+| `magnesium_mg` | mg | Magnesium |
+| `phosphorus_mg` | mg | Phosphorus |
+| `zinc_mg` | mg | Zinc |
+
+**Vitamins:**
+| Field | Unit | Description |
+|-------|------|-------------|
+| `vitamin_a_mcg` | mcg | Vitamin A |
+| `vitamin_c_mg` | mg | Vitamin C |
+| `vitamin_d_mcg` | mcg | Vitamin D |
+| `vitamin_e_mg` | mg | Vitamin E |
+| `vitamin_k_mcg` | mcg | Vitamin K |
+| `vitamin_b6_mg` | mg | Vitamin B6 |
+| `vitamin_b12_mcg` | mcg | Vitamin B12 |
+| `thiamin_mg` | mg | Thiamin (B1) |
+| `riboflavin_mg` | mg | Riboflavin (B2) |
+| `niacin_mg` | mg | Niacin (B3) |
+| `folate_mcg` | mcg | Folate |
+
+**Other:**
+| Field | Unit | Description |
+|-------|------|-------------|
+| `water_g` | g | Water content |
+| `alcohol_g` | g \| null | Alcohol (null if none) |
+| `caffeine_mg` | mg \| null | Caffeine (null if none) |
 
 ---
 
 ## Recipe Summary (List/Search)
 
-When browsing or searching via `GET /api/v1/recipes`, you receive a condensed version:
+When browsing or searching via `GET /api/v1/recipes`, you receive a condensed version with pagination metadata.
 
 ```json
 {
   "data": [
     {
-      "id": "c0582be3-10bf-4077-ba54-b6ff6f236e53",
-      "name": "Classic Chicken Parmesan",
-      "description": "Crispy breaded chicken cutlets topped with marinara and melted mozzarella.",
+      "id": "a066f472-ed0c-46ea-8e2c-a0053c3183a8",
+      "name": "Texas Chili con Carne",
+      "description": "A thick, beef-based stew...",
       "category": "Dinner",
-      "cuisine": "Italian",
+      "cuisine": "American",
       "difficulty": "Intermediate",
-      "total_time": "PT55M",
-      "calories": 485,
-      "tags": ["chicken", "italian", "comfort food", "baked"]
+      "total_time": "PT2H",
+      "calories": 569,
+      "tags": ["Beef", "Slow-Cooked", "High-Protein", "Southwestern"]
     }
   ],
   "meta": {
@@ -459,70 +611,9 @@ When browsing or searching via `GET /api/v1/recipes`, you receive a condensed ve
 
 ---
 
-## Metadata Endpoints
-
-### Categories
-
-`GET /api/v1/categories`
-
-```json
-{
-  "data": [
-    { "name": "Appetizer", "count": 1250 },
-    { "name": "Breakfast", "count": 2100 },
-    { "name": "Brunch", "count": 890 },
-    { "name": "Dessert", "count": 3200 },
-    { "name": "Dinner", "count": 8500 },
-    { "name": "Lunch", "count": 4200 },
-    { "name": "Side Dish", "count": 2800 },
-    { "name": "Snack", "count": 1560 }
-  ]
-}
-```
-
-### Cuisines
-
-`GET /api/v1/cuisines`
-
-```json
-{
-  "data": [
-    { "name": "American", "count": 5200 },
-    { "name": "Chinese", "count": 1800 },
-    { "name": "French", "count": 1200 },
-    { "name": "Indian", "count": 1500 },
-    { "name": "Italian", "count": 2800 },
-    { "name": "Japanese", "count": 980 },
-    { "name": "Mexican", "count": 2100 },
-    { "name": "Thai", "count": 750 }
-  ]
-}
-```
-
-### Dietary Flags
-
-`GET /api/v1/dietary-flags`
-
-```json
-{
-  "data": [
-    { "name": "Dairy-Free", "count": 4200 },
-    { "name": "Gluten-Free", "count": 5800 },
-    { "name": "Keto", "count": 1200 },
-    { "name": "Low-Carb", "count": 2400 },
-    { "name": "Nut-Free", "count": 6100 },
-    { "name": "Paleo", "count": 980 },
-    { "name": "Vegan", "count": 2800 },
-    { "name": "Vegetarian", "count": 4500 }
-  ]
-}
-```
-
----
-
 ## TypeScript Types
 
-For TypeScript projects, here's the complete type definition:
+Complete type definitions for TypeScript projects:
 
 ```typescript
 interface Recipe {
@@ -533,35 +624,66 @@ interface Recipe {
   cuisine: string;
   difficulty: 'Beginner' | 'Intermediate' | 'Advanced';
   tags: string[];
-  yields: {
-    amount: number;
-    unit: string;
-  };
-  timing: {
-    active: string;   // ISO 8601 duration
-    passive: string;  // ISO 8601 duration
-    total: string;    // ISO 8601 duration
-  };
+  meta: RecipeMeta;
+  dietary: DietaryInfo;
+  storage: StorageInfo;
+  equipment: Equipment[];
   ingredients: IngredientGroup[];
   instructions: InstructionStep[];
-  nutrition: Nutrition;
-  equipment: string[];
-  tips: TroubleshootingTip[];
-  storage: StorageInfo;
-  chef_notes: string;
+  troubleshooting: TroubleshootingItem[];
+  chef_notes: string[];
+  cultural_context: string;
+  nutrition: NutritionInfo;
+}
+
+interface RecipeMeta {
+  active_time: string;      // ISO 8601 duration
+  passive_time: string;     // ISO 8601 duration
+  total_time: string;       // ISO 8601 duration
+  overnight_required: boolean;
+  yields: string;
+  yield_count: number;
+  serving_size_g: number;
+}
+
+interface DietaryInfo {
+  flags: string[];
+  not_suitable_for: string[];
+}
+
+interface StorageInfo {
+  refrigerator: {
+    notes: string;
+    duration: string;       // ISO 8601 duration
+  };
+  freezer: {
+    notes: string;
+    duration: string;       // ISO 8601 duration
+  };
+  reheating: string;
+  does_not_keep: boolean;
+}
+
+interface Equipment {
+  name: string;
+  required: boolean;
+  alternative: string | null;
 }
 
 interface IngredientGroup {
-  group: string;
+  group_name: string;
   items: IngredientItem[];
 }
 
 interface IngredientItem {
   name: string;
-  quantity: number;
-  unit: string;
-  preparation?: string;
-  substitutions?: Substitution[];
+  quantity: number | null;
+  unit: string | null;
+  preparation: string | null;
+  notes: string | null;
+  substitutions: Substitution[];
+  ingredient_id: string;
+  nutrition_source: string;
 }
 
 interface Substitution {
@@ -570,47 +692,100 @@ interface Substitution {
 }
 
 interface InstructionStep {
-  step: number;
+  step_number: number;
+  phase: 'prep' | 'cook' | 'finish';
   text: string;
-  action?: string;
-  temperature?: Temperature;
-  doneness_cue?: string;
+  structured: StructuredStep;
+  tips: string[];
+}
+
+interface StructuredStep {
+  action: string;
+  temperature: Temperature | null;
+  duration: string | null;    // ISO 8601 duration
+  doneness_cues: DonenessCues | null;
 }
 
 interface Temperature {
-  value: number;
-  unit: 'F' | 'C';
+  celsius: number;
+  fahrenheit: number;
 }
 
-interface Nutrition {
-  serving_size: string;
+interface DonenessCues {
+  visual: string | null;
+  tactile: string | null;
+}
+
+interface TroubleshootingItem {
+  symptom: string;
+  likely_cause: string;
+  prevention: string;
+  fix: string;
+}
+
+interface NutritionInfo {
+  per_serving: NutritionPerServing;
+  sources: string[];
+}
+
+interface NutritionPerServing {
   calories: number;
-  macros: Record<string, NutrientValue>;
-  vitamins: Record<string, NutrientValue>;
-  minerals: Record<string, NutrientValue>;
+  protein_g: number;
+  carbohydrates_g: number;
+  fat_g: number;
+  saturated_fat_g: number;
+  trans_fat_g: number;
+  monounsaturated_fat_g: number;
+  polyunsaturated_fat_g: number;
+  fiber_g: number;
+  sugar_g: number;
+  sodium_mg: number;
+  cholesterol_mg: number;
+  potassium_mg: number;
+  calcium_mg: number;
+  iron_mg: number;
+  magnesium_mg: number;
+  phosphorus_mg: number;
+  zinc_mg: number;
+  vitamin_a_mcg: number;
+  vitamin_c_mg: number;
+  vitamin_d_mcg: number;
+  vitamin_e_mg: number;
+  vitamin_k_mcg: number;
+  vitamin_b6_mg: number;
+  vitamin_b12_mcg: number;
+  thiamin_mg: number;
+  riboflavin_mg: number;
+  niacin_mg: number;
+  folate_mcg: number;
+  water_g: number;
+  alcohol_g: number | null;
+  caffeine_mg: number | null;
 }
 
-interface NutrientValue {
-  value: number;
-  unit: string;
-  daily_value?: number;
+// List/Search response
+interface RecipeListResponse {
+  data: RecipeSummary[];
+  meta: PaginationMeta;
 }
 
-interface TroubleshootingTip {
-  issue: string;
-  solution: string;
+interface RecipeSummary {
+  id: string;
+  name: string;
+  description: string;
+  category: string;
+  cuisine: string;
+  difficulty: string;
+  total_time: string;
+  calories: number;
+  tags: string[];
 }
 
-interface StorageInfo {
-  refrigerator: {
-    duration: string;
-    instructions: string;
-  };
-  freezer: {
-    duration: string;
-    instructions: string;
-  };
-  reheating: string;
+interface PaginationMeta {
+  page: number;
+  per_page: number;
+  total: number;
+  total_pages: number;
 }
 ```
 
