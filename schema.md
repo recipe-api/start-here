@@ -787,7 +787,112 @@ interface PaginationMeta {
   total: number;
   total_pages: number;
 }
+
+// Ingredient types
+interface IngredientCategory {
+  name: string;
+  count: number;
+}
+
+interface IngredientCategoriesResponse {
+  data: IngredientCategory[];
+}
+
+interface Ingredient {
+  id: string;
+  name: string;
+  category: string;
+  source: string;
+}
+
+interface IngredientsResponse {
+  data: Ingredient[];
+  meta: PaginationMeta;
+}
 ```
+
+---
+
+## Ingredients Endpoints
+
+### Ingredient Categories
+
+`GET /api/v1/ingredient-categories`
+
+Returns all ingredient categories with counts.
+
+```json
+{
+  "data": [
+    { "name": "Vegetables", "count": 1283 },
+    { "name": "Beef", "count": 995 },
+    { "name": "Baked Goods", "count": 617 },
+    { "name": "Beverages", "count": 555 },
+    { "name": "Prepared Foods", "count": 530 },
+    { "name": "Sauces & Condiments", "count": 512 },
+    { "name": "Lamb & Game", "count": 504 }
+  ]
+}
+```
+
+### Browse Ingredients
+
+`GET /api/v1/ingredients`
+
+Returns a paginated list of ingredients with optional filtering.
+
+**Query Parameters:**
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `q` | string | - | Search by ingredient name |
+| `category` | string | - | Filter by category |
+| `page` | number | 1 | Page number |
+| `per_page` | number | 50 | Results per page (max: 100) |
+
+**Response:**
+
+```json
+{
+  "data": [
+    {
+      "id": "001764f3-4d44-4dbc-801b-0e4f094c756d",
+      "name": "Chickpeas, canned, drained",
+      "category": "Legumes",
+      "source": "USDA"
+    },
+    {
+      "id": "0004d34a-afbe-4934-b94e-195e1602b23d",
+      "name": "Spelt, cooked",
+      "category": "Grains & Pasta",
+      "source": "USDA"
+    },
+    {
+      "id": "0009da79-3cdb-4838-bdab-2e65ee0a9ccd",
+      "name": "Nashi pear",
+      "category": "Fruits",
+      "source": "Aggregated Public Sources"
+    }
+  ],
+  "meta": {
+    "total": 10441,
+    "page": 1,
+    "per_page": 50
+  }
+}
+```
+
+### Filtering Recipes by Ingredients
+
+Use the `ingredients` query parameter on `/api/v1/recipes` to find recipes containing specific ingredients:
+
+```bash
+# Find recipes containing chickpeas and garlic
+curl -H "X-API-Key: $API_KEY" \
+  "https://recipe-api.com/api/v1/recipes?ingredients=001764f3-4d44-4dbc-801b-0e4f094c756d,30109e1e-d8e8-4f76-a6f4-82ac5b071fde"
+```
+
+The endpoint returns recipes containing **ALL** specified ingredients (AND logic).
 
 ---
 

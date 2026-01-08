@@ -83,6 +83,8 @@ curl -H "X-API-Key: rapi_your_key_here" \
 | `GET /api/v1/categories` | List recipe categories |
 | `GET /api/v1/cuisines` | List available cuisines |
 | `GET /api/v1/dietary-flags` | List dietary filters |
+| `GET /api/v1/ingredient-categories` | List ingredient categories |
+| `GET /api/v1/ingredients` | Search and browse 10,000+ ingredients |
 
 #### Recipe Details (Auth Required, 1 Credit)
 
@@ -125,8 +127,36 @@ curl -H "X-API-Key: $API_KEY" \
 | `max_calories` | number | Maximum calories per serving |
 | `min_protein` | number | Minimum protein (grams) per serving |
 | `max_protein` | number | Maximum protein (grams) per serving |
+| `min_carbs` | number | Minimum carbohydrates (grams) per serving |
+| `max_carbs` | number | Maximum carbohydrates (grams) per serving |
+| `min_fat` | number | Minimum fat (grams) per serving |
+| `max_fat` | number | Maximum fat (grams) per serving |
+| `ingredients` | string | Comma-separated ingredient UUIDs (returns recipes containing ALL specified ingredients) |
 | `page` | number | Page number (default: 1) |
 | `per_page` | number | Results per page (max: 100) |
+
+### Ingredients Search
+
+The `/api/v1/ingredients` endpoint lets you browse the ingredient database:
+
+```bash
+# Search ingredients by name
+curl -H "X-API-Key: $API_KEY" \
+  "https://recipe-api.com/api/v1/ingredients?q=chicken"
+
+# Filter by category
+curl -H "X-API-Key: $API_KEY" \
+  "https://recipe-api.com/api/v1/ingredients?category=Vegetables"
+```
+
+#### Ingredients Query Parameters
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `q` | string | Search by ingredient name |
+| `category` | string | Filter by ingredient category |
+| `page` | number | Page number (default: 1) |
+| `per_page` | number | Results per page (default: 50, max: 100) |
 
 ## Understanding Credits
 
