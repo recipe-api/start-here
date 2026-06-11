@@ -183,9 +183,10 @@ Rate limits vary by plan:
 | Plan | Requests/Day | Requests/Minute |
 |------|--------------|-----------------|
 | Free | 100 | 10 |
-| Hobby | 500 | 30 |
-| Starter | 2,000 | 100 |
-| Pro | 50,000 | 500 |
+| Indie | 500 | 20 |
+| Growth | 2,000 | 60 |
+| Scale | 10,000 | 300 |
+| Enterprise | 100,000 | 1,000 |
 
 When rate limited, you'll receive HTTP 429 with a `Retry-After` header.
 
