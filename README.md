@@ -14,10 +14,12 @@ A production-ready REST API providing structured access to **25,000+ recipes** w
 
 | Resource | URL |
 |----------|-----|
-| Sign Up | https://recipe-api.com/signup |
+| Sign Up (free, no card) | https://recipe-api.com/signup |
 | Dashboard | https://recipe-api.com/portal |
 | API Documentation | https://recipe-api.com/docs |
 | OpenAPI Spec | https://recipe-api.com/openapi.json |
+| Claude / MCP Connector | https://recipe-api.com/mcp |
+| Guides & Tutorials | https://recipe-api.com/guides |
 
 ## Getting Started
 
@@ -27,13 +29,18 @@ Sign up at [recipe-api.com](https://recipe-api.com/signup) to get your free API 
 
 ### 2. Choose Your Language
 
-Pick a starter kit for your preferred language:
+Pick the official SDK or a starter kit for your preferred language:
 
 | Language | Repository | Description |
 |----------|------------|-------------|
-| TypeScript | [recipe-api-typescript](https://github.com/recipe-api/recipe-api-typescript) | Node.js starter with full type definitions |
+| **JavaScript/TypeScript SDK** | [javascript-sdk](https://github.com/recipe-api/javascript-sdk) | **Official SDK** — zero dependencies, full types, automatic retry/backoff |
+| TypeScript | [recipe-api-typescript](https://github.com/recipe-api/recipe-api-typescript) | Minimal Node.js starter with full type definitions |
 | Python | [recipe-api-python](https://github.com/recipe-api/recipe-api-python) | Python 3 starter with requests library |
 | Go | [recipe-api-golang](https://github.com/recipe-api/recipe-api-golang) | Go starter with typed structs |
+
+### Or skip the code entirely — use it inside Claude
+
+Recipe API ships an official [MCP connector](https://recipe-api.com/mcp). Add `https://mcp.recipe-api.com/mcp` as a custom connector in Claude, authorize with your `rapi_` key, and ask for recipes in natural language — search, filters, full recipes, and AI generation, no integration required.
 
 ### 3. Make Your First Request
 
