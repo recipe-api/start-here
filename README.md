@@ -40,7 +40,9 @@ Pick the official SDK or a starter kit for your preferred language:
 
 ### Or skip the code entirely — use it inside Claude
 
-Recipe API ships an official [MCP connector](https://recipe-api.com/mcp). Add `https://mcp.recipe-api.com/mcp` as a custom connector in Claude, authorize with your `rapi_` key, and ask for recipes in natural language — search, filters, full recipes, and AI generation, no integration required.
+Recipe API ships an official [MCP connector](https://recipe-api.com/mcp). Add `https://recipe-api.com/api/mcp` as a custom connector in Claude and authorize with OAuth (an API key is minted automatically) — then ask for recipes in natural language: search, filters, full recipes, and AI generation, no integration required.
+
+Pair it with the free [Claude skills](https://recipe-api.com/skills) — weekly meal planning, pantry cooking, macro coaching, dinner-party hosting — or grab everything at once in Claude Code: `/plugin marketplace add recipe-api/claude-skills`.
 
 ### 3. Make Your First Request
 
